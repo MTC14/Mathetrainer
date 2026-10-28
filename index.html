@@ -46,6 +46,10 @@ h2{margin:0 0 4px}
 .btn.small{padding:6px 10px;font-size:13px}
 .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
 select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px}
+.group-head{display:flex;align-items:baseline;gap:12px;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.group-head b{font-size:17px}
+.group-head span{color:var(--muted);font-size:13px}
+.group-head.first{margin-top:6px}
 /* Roulette */
 .roulette{position:relative;overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 0;margin:14px 0}
 .roulette::before,.roulette::after{content:"";position:absolute;top:0;bottom:0;width:90px;z-index:2;pointer-events:none}
@@ -93,6 +97,25 @@ footer{padding:16px;text-align:center;color:var(--muted);font-size:12.5px;border
   .rcard{width:110px}
   .rcard img{height:64px}
 }
+
+/* Neue Bereiche */
+#lb .lb-status{font-size:11px;color:var(--muted);margin-top:5px}
+.upgrade-layout{display:grid;grid-template-columns:minmax(180px,1fr) minmax(230px,330px) minmax(180px,1fr);gap:18px;align-items:center;margin:20px 0}
+.upgrade-pick{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;min-height:270px}
+.upgrade-pick img{height:150px;width:100%;object-fit:contain}
+.wheel{width:min(270px,70vw);aspect-ratio:1;border-radius:50%;margin:auto;display:grid;place-items:center;position:relative;background:conic-gradient(#42d77d 0 25%,#ed5a3d 25% 100%);box-shadow:0 0 34px #f27a1a33}
+.wheel-pointer{position:absolute;inset:0;z-index:3;border-radius:50%;pointer-events:none;transform:rotate(0deg);transform-origin:50% 50%;transition:transform 4.6s cubic-bezier(.12,.7,.12,1);}
+.wheel-pointer:before{content:"";position:absolute;top:4px;left:calc(50% - 12px);border-left:12px solid transparent;border-right:12px solid transparent;border-top:0;border-bottom:28px solid #fff;filter:drop-shadow(0 1px 6px #000)}
+.wheel:before{content:"";position:absolute;inset:13px;background:radial-gradient(circle,#242a34,#101319 70%);border:5px solid #3a414e;border-radius:50%}
+.wheel-center{z-index:1;text-align:center}.wheel-center strong{font-size:34px;color:#ffd36a;display:block}.wheel-center span{font-size:12px;color:var(--muted)}
+.upgrade-columns{display:grid;grid-template-columns:1fr 1fr;gap:18px}.upgrade-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:9px;max-height:410px;overflow:auto}
+.pick-card{cursor:pointer}.pick-card.selected{outline:2px solid var(--accent)}
+.inspect{max-width:1050px;width:100%;padding:0;overflow:hidden;text-align:left;background:#111923}.inspect-scene{min-height:70vh;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at 50% 55%,#66715b 0,#38463b 28%,#212a2b 61%,#111720 100%)}
+.inspect-scene:before{content:"";position:absolute;inset:0;background:linear-gradient(125deg,transparent 35%,#ffffff12 50%,transparent 65%),repeating-linear-gradient(0deg,transparent 0 70px,#0002 71px 73px);filter:blur(2px)}
+.inspect-title,.inspect-image,.inspect-details,.inspect-close{position:relative;z-index:1}.inspect-title{font-size:clamp(20px,3vw,34px);border-bottom:4px solid #d3444b;padding:0 10px 8px;text-align:center}.inspect-image{width:min(75%,760px);height:min(50vh,430px);object-fit:contain;filter:drop-shadow(0 22px 24px #0009)}.inspect-details{position:absolute;bottom:18px;left:20px;right:20px;background:#10151ddc;padding:12px 16px;border-radius:10px;display:flex;gap:10px 22px;flex-wrap:wrap;font-size:13px}.inspect-close{position:absolute;right:14px;top:14px}
+#panicScreen{display:none;position:fixed;inset:0;z-index:99999;background:#fff;color:#252525;font-family:Arial,sans-serif;padding:8vh max(7vw,20px)}body.panic>*:not(#panicScreen){display:none!important}body.panic #panicScreen{display:block!important}
+.panic-panel{max-width:650px;margin:0 auto}.panic-panel h1{font-size:32px;font-weight:400;margin:0 0 18px}.panic-label{font-size:14px;color:#777;margin-bottom:12px}.panic-input{width:100%;height:50px;border:2px solid #79c5ff;border-radius:4px;box-shadow:0 0 4px #1684cf;padding:10px;font-size:18px}.panic-submit{display:block;margin:24px auto;background:#0873b9;border:0;color:#fff;padding:12px 42px;border-radius:28px;font-size:16px}.panic-error{color:#b32d2d;text-align:center;min-height:22px}
+@media(max-width:850px){.upgrade-layout{grid-template-columns:1fr}.wheel{grid-row:2}.upgrade-pick{min-height:0}.inspect-scene{min-height:80vh}.inspect-image{width:90%;height:45vh}.inspect-details{position:relative;bottom:auto;left:auto;right:auto;margin-top:8px}.upgrade-columns{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -101,9 +124,12 @@ footer{padding:16px;text-align:center;color:var(--muted);font-size:12.5px;border
   <nav>
     <button data-action="nav" data-view="cases" id="navCases">Cases</button>
     <button data-action="nav" data-view="inventory" id="navInv">Inventar</button>
+    <button data-action="nav" data-view="upgrader" id="navUpgrade">Upgrader</button>
+    <button data-action="nav" data-view="leaderboard" id="navLeaderboard">Rangliste</button>
   </nav>
   <div class="right">
     <span class="chip" id="nameChip" data-action="rename" style="cursor:pointer" title="Namen ändern"></span>
+    <button class="icon" id="panicBtn" data-action="panic" title="Tarnansicht">•</button>
     <button class="icon" id="muteBtn" data-action="mute" title="Sound an/aus">🔊</button>
     <div class="balance" id="balance">$0,00</div>
   </div>
@@ -114,7 +140,7 @@ footer{padding:16px;text-align:center;color:var(--muted);font-size:12.5px;border
 <aside id="lb">
   <h4>🏆 TOP 3</h4>
   <table><tbody id="lbBody"><tr><td>…</td></tr></tbody></table>
-  <div class="own" id="lbOwn"></div>
+  <div class="own" id="lbOwn"></div><div class="lb-status" id="lbStatus">Globale Rangliste nicht verbunden</div>
 </aside>
 
 <footer>Reiner Simulator mit virtuellem Geld, nicht mit Valve verbunden.</footer>
@@ -135,6 +161,8 @@ footer{padding:16px;text-align:center;color:var(--muted);font-size:12.5px;border
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="modal" id="inspectModal" aria-modal="true" role="dialog"><div class="box inspect" id="inspectBox"></div></div>
+<div id="panicScreen"><div class="panic-panel"><h1>Freischaltcode eintragen <span style="color:#087bc1">❔</span></h1><div class="panic-label">♟ &nbsp;Lokale Freischaltung</div><form id="panicForm"><input class="panic-input" id="panicCode" autocomplete="off" aria-label="Freischaltcode"><button class="panic-submit">Jetzt freischalten</button><div id="panicError" class="panic-error"></div></form></div></div>
 <noscript><p style="padding:20px">Diese Seite braucht JavaScript.</p></noscript>
 
 <script>
@@ -146,46 +174,82 @@ const CONFIG = {
   currency: "$",                 // Nur Fake-Währung
   startBalance: 0,
 
-  // Kostenloser Case: zieht aus dem Item-Pool eines echten Cases (poolFrom).
-  // Cooldown in Stunden (zum Testen z. B. 0.02 = ca. 1 Minute).
-  freeCase: { name: "Free Case", poolFrom: "Danger Zone Case", cooldownHours: 24 },
+  // Kostenloser Case: UNBEGRENZT oft öffenbar, zieht aber NUR Mil-Spec (blau)
+  // aus dem Item-Pool eines echten Cases (poolFrom).
+  freeCase: { name: "Free Case", poolFrom: "Danger Zone Case" },
 
-  // Preise = Fake-Preise, grob "Case + Schlüssel". Namen müssen exakt den echten Case-Namen entsprechen.
+  // Fake-Preise. Die Liste wird automatisch nach Preis sortiert (günstig oben, teuer unten),
+  // du musst die Reihenfolge also nie von Hand pflegen. Namen müssen den echten Case-Namen entsprechen;
+  // fehlt einer in der Datenquelle, wird er übersprungen und auf der Startseite aufgelistet.
+  // Optional pro Case: mult: 2  -> eigener Wert-Multiplikator statt der automatischen Berechnung.
   cases: [
-    { name: "Kilowatt Case",              price: 3.50 },
-    { name: "Revolution Case",            price: 3.20 },
-    { name: "Recoil Case",                price: 3.10 },
-    { name: "Dreams & Nightmares Case",   price: 3.10 },
-    { name: "Fracture Case",              price: 3.10 },
-    { name: "Snakebite Case",             price: 3.00 },
-    { name: "Prisma 2 Case",              price: 3.20 },
-    { name: "Prisma Case",                price: 3.40 },
-    { name: "CS20 Case",                  price: 3.30 },
-    { name: "Danger Zone Case",           price: 3.10 },
-    { name: "Clutch Case",                price: 3.20 },
-    { name: "Spectrum 2 Case",            price: 3.60 },
-    { name: "Horizon Case",               price: 3.20 },
-    { name: "Glove Case",                 price: 5.50 },
-    { name: "Chroma 3 Case",              price: 5.00 },
-    { name: "Gamma 2 Case",               price: 5.00 }
+    // Einsteiger
+    { name: "Recoil Case",                price: 0.50 },
+    { name: "Dreams & Nightmares Case",   price: 0.55 },
+    { name: "Fracture Case",              price: 0.60 },
+    { name: "Snakebite Case",             price: 0.65 },
+    { name: "Revolver Case",              price: 0.70 },
+    { name: "Revolution Case",            price: 0.80 },
+    // Mittelklasse
+    { name: "Prisma 2 Case",              price: 1.10 },
+    { name: "CS20 Case",                  price: 1.20 },
+    { name: "Danger Zone Case",           price: 1.30 },
+    { name: "Prisma Case",                price: 1.40 },
+    { name: "Clutch Case",                price: 1.50 },
+    { name: "Horizon Case",               price: 1.60 },
+    { name: "Kilowatt Case",              price: 1.80 },
+    { name: "Operation Riptide Case",     price: 2.00 },
+    { name: "Shattered Web Case",         price: 2.20 },
+    { name: "Operation Broken Fang Case", price: 2.40 },
+    // Premium
+    { name: "Spectrum 2 Case",            price: 2.80 },
+    { name: "Spectrum Case",              price: 3.20 },
+    { name: "Gamma 2 Case",               price: 3.60 },
+    { name: "Gamma Case",                 price: 4.00 },
+    { name: "Chroma 2 Case",              price: 4.40 },
+    { name: "Chroma Case",                price: 4.80 },
+    { name: "Chroma 3 Case",              price: 5.20 },
+    { name: "Glove Case",                 price: 5.80 },
+    // High Roller
+    { name: "Falchion Case",              price: 7.00 },
+    { name: "Shadow Case",                price: 8.00 },
+    { name: "Operation Hydra Case",       price: 10.00 },
+    { name: "Operation Wildfire Case",    price: 12.00 },
+    { name: "Operation Breakout Weapon Case", price: 18.00 }
   ],
+
+  // Überschriften auf der Startseite (nach Preis, max = obere Grenze)
+  groups: [
+    { label: "Einsteiger",   max: 1.00 },
+    { label: "Mittelklasse", max: 2.50 },
+    { label: "Premium",      max: 6.00 },
+    { label: "High Roller",  max: Infinity }
+  ],
+
+  // WERT-MULTIPLIKATOR: Die Verkaufspreise aller Items eines Cases werden so skaliert, dass der
+  // erwartete Rückgewinn ca. targetReturn (80 %) des Case-Preises beträgt. Teure Cases haben also
+  // wertvollere Items, im Schnitt zahlt man aber etwas drauf – mit Jackpot-Chance durch Messer/Handschuhe.
+  // 1.0 wäre "fair", über 1.0 wäre ein Gewinn-Case. Pro Case überschreibbar (siehe mult oben).
+  targetReturn: 0.80,
 
   // Echte Drop-Chancen in % (Summe = 100)
   odds: { milspec: 79.92, restricted: 15.98, classified: 3.20, covert: 0.64, gold: 0.26 },
   stattrakChance: 0.10,          // 10 % wie im echten Spiel
   stattrakMultiplier: 1.6,
 
-  // Fake-Verkaufspreise: [min, max] je Seltenheit (Basis, wird je Skin gestreut) ...
+  // Fake-Basispreise (vor Wear und Case-Multiplikator): [min, max] je Seltenheit, pro Skin gestreut.
+  // Blaue Skins sind bewusst sehr günstig.
   priceRanges: {
-    milspec:[0.08,0.60], restricted:[0.40,2.50], classified:[1.50,9], covert:[6,45], gold:[150,1800]
+    milspec:[0.02,0.30], restricted:[0.20,1.50], classified:[0.80,6], covert:[3,30], gold:[25,300]
   },
   // ... und mit der Abnutzung multipliziert
   wearMultiplier: { "Factory New":1.5, "Minimal Wear":1.0, "Field-Tested":0.75, "Well-Worn":0.6, "Battle-Scarred":0.5 },
 
   rouletteMs: 6500,
 
-  // Rangliste: Standard = lokal. Für eine echte, gemeinsame Rangliste siehe SupabaseLeaderboard unten.
-  supabase: { url: "", anonKey: "", table: "leaderboard" },
+  // Nur ein serverseitiger Edge Function-Endpunkt darf Ranglistenwerte schreiben.
+  // Leerlassen, bis die mitgelieferte Supabase-Lösung installiert wurde.
+  supabase: { url: "", anonKey: "", functionName: "leaderboard" },
 
   // Datenquelle (öffentlich, kostenlos)
   api: {
@@ -229,7 +293,7 @@ const KEY = "cs2sim_state_v1";
 function defaultState() {
   return {
     playerId: (crypto.randomUUID ? crypto.randomUUID() : "p" + Date.now() + Math.random().toString(16).slice(2)),
-    name: "", balance: CONFIG.startBalance, inventory: [], lastFree: 0, pending: null, muted: false
+    name: "", balance: CONFIG.startBalance, inventory: [], pending: null, muted: false, fast: false, autoSell: false
   };
 }
 let state = (() => {
@@ -247,75 +311,62 @@ const totalValue = () => round2(state.balance + state.inventory.reduce((s, i) =>
    ========================================================================== */
 // Interface: async top(n) -> [{id,name,total}] ; async submit({id,name,total})
 
-// a) Standard: lokal + simulierte Spieler, damit die Liste nicht leer ist
-class LocalLeaderboard {
-  constructor() {
-    this.bots = [
-      { id: "bot1", name: "Ace_Hunter",    total: 2840.50 },
-      { id: "bot2", name: "NovaFrag",      total: 1210.20 },
-      { id: "bot3", name: "KnifeEnjoyer",  total: 640.80 },
-      { id: "bot4", name: "CaseGoblin",    total: 310.40 },
-      { id: "bot5", name: "SilentPeek",    total: 95.00 }
-    ];
-  }
-  async top(n) {
-    let me = null;
-    try { me = JSON.parse(localStorage.getItem("cs2sim_lb_me")); } catch (e) {}
-    const rows = this.bots.concat(me ? [me] : []);
-    return rows.sort((a, b) => b.total - a.total).slice(0, n);
-  }
-  async submit(entry) { try { localStorage.setItem("cs2sim_lb_me", JSON.stringify(entry)); } catch (e) {} }
-}
-
-// b) Echtes Backend mit Supabase (kostenloser Plan reicht). Was du dafür tun musst:
-//   1. Auf supabase.com ein Projekt anlegen.
-//   2. Im SQL-Editor ausführen:
-//        create table leaderboard (
-//          player_id text primary key,
-//          name text not null,
-//          total numeric not null default 0,
-//          updated_at timestamptz default now()
-//        );
-//        alter table leaderboard enable row level security;
-//        create policy "lesen"      on leaderboard for select using (true);
-//        create policy "einfuegen"  on leaderboard for insert with check (true);
-//        create policy "aendern"    on leaderboard for update using (true);
-//   3. Unter Project Settings -> API die "Project URL" und den "anon public key" in CONFIG.supabase eintragen.
-//   Achtung: Weil der Spielstand im Browser liegt, kann ein Nutzer seinen Wert theoretisch manipulieren.
-//   Für eine "echte" Rangliste müsste die Logik auf einen Server (z. B. Supabase Edge Functions).
+// Ohne serverseitige Funktion werden keine Teilnehmer vorgetäuscht.
 class SupabaseLeaderboard {
   constructor(cfg) { this.cfg = cfg; }
-  get h() { return { apikey: this.cfg.anonKey, Authorization: "Bearer " + this.cfg.anonKey }; }
+  get headers() { return { apikey: this.cfg.anonKey, Authorization: "Bearer " + this.cfg.anonKey, "Content-Type": "application/json" }; }
   async top(n) {
-    const r = await fetch(`${this.cfg.url}/rest/v1/${this.cfg.table}?select=player_id,name,total&order=total.desc&limit=${n}`, { headers: this.h });
+    const r = await fetch(`${this.cfg.url}/rest/v1/leaderboard?select=player_id,name,total&order=total.desc&limit=${n}`, { headers: this.headers });
     if (!r.ok) throw new Error("Rangliste nicht erreichbar");
-    return (await r.json()).map(x => ({ id: x.player_id, name: x.name, total: Number(x.total) }));
+    return (await r.json()).map(x => ({ id:x.player_id, name:x.name, total:Number(x.total) }));
+  }
+  async session() {
+    const key="cs2sim_supabase_session"; let session=null;
+    try { session=JSON.parse(localStorage.getItem(key)); } catch(e) {}
+    if (!session || !session.access_token || (session.expires_at||0)*1000 < Date.now()+60000) {
+      if (session?.refresh_token) {
+        const rr=await fetch(`${this.cfg.url}/auth/v1/token?grant_type=refresh_token`,{method:"POST",headers:{apikey:this.cfg.anonKey,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:session.refresh_token})});
+        if(rr.ok){const d=await rr.json();session={...d,expires_at:Math.floor(Date.now()/1000)+(d.expires_in||3600)};}
+        else session=null;
+      }
+      if (!session || !session.access_token) {
+        const r=await fetch(`${this.cfg.url}/auth/v1/signup`,{method:"POST",headers:{apikey:this.cfg.anonKey,"Content-Type":"application/json"},body:"{}"});
+        if (!r.ok) throw new Error("Anonyme Supabase-Anmeldung fehlgeschlagen");
+        const d=await r.json(); session={...d,expires_at:Math.floor(Date.now()/1000)+(d.expires_in||3600)};
+      }
+      localStorage.setItem(key,JSON.stringify(session));
+    }
+    if(session.user?.id && state.playerId!==session.user.id){state.playerId=session.user.id;try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+    return session;
   }
   async submit(e) {
-    await fetch(`${this.cfg.url}/rest/v1/${this.cfg.table}?on_conflict=player_id`, {
-      method: "POST",
-      headers: { ...this.h, "Content-Type": "application/json", Prefer: "resolution=merge-duplicates" },
-      body: JSON.stringify([{ player_id: e.id, name: e.name, total: e.total }])
-    });
+    const session=await this.session();
+    const r = await fetch(`${this.cfg.url}/functions/v1/${this.cfg.functionName}`, { method:"POST", headers:{...this.headers,Authorization:"Bearer "+session.access_token}, body:JSON.stringify({...e,id:session.user?.id || e.id}) });
+    if (!r.ok) throw new Error("Server konnte den Rang nicht aktualisieren");
   }
 }
-
-const leaderboard = (CONFIG.supabase.url && CONFIG.supabase.anonKey)
-  ? new SupabaseLeaderboard(CONFIG.supabase) : new LocalLeaderboard();
+const leaderboard = CONFIG.supabase.url && CONFIG.supabase.anonKey ? new SupabaseLeaderboard(CONFIG.supabase) : null;
 
 let lbTimer;
 function scheduleLeaderboard() { clearTimeout(lbTimer); lbTimer = setTimeout(refreshLeaderboard, 400); }
 async function refreshLeaderboard() {
-  if (!state.name) return;
+  if (!leaderboard) {
+    $("#lbBody").innerHTML = "<tr><td colspan=\"3\">Noch keine globale Rangliste</td></tr>";
+    $("#lbStatus").textContent = "Backend nicht verbunden – keine erfundenen Einträge";
+    $("#lbOwn").textContent = "Dein lokaler Gesamtwert: " + money(totalValue()); return;
+  }
   try {
-    await leaderboard.submit({ id: state.playerId, name: state.name, total: totalValue() });
-    const rows = await leaderboard.top(3);
-    $("#lbBody").innerHTML = rows.map((r, i) =>
-      `<tr class="${r.id === state.playerId ? "me" : ""}"><td>${["🥇","🥈","🥉"][i]}</td><td>${esc(r.name)}</td><td>${money(r.total)}</td></tr>`).join("")
-      || "<tr><td>Noch leer</td></tr>";
-  } catch (e) { $("#lbBody").innerHTML = "<tr><td>Rangliste offline</td></tr>"; }
+    if (state.name) await leaderboard.submit({ id: state.playerId, name: state.name, total: totalValue() });
+    const rows = await leaderboard.top(100); window._leaderboardRows = rows;
+    drawLeaderboard(rows.slice(0,3));
+    $("#lbStatus").textContent = "Globale Rangliste · " + rows.length + " Spieler";
+  } catch (e) { $("#lbBody").innerHTML = "<tr><td colspan=\"3\">Rangliste nicht erreichbar</td></tr>"; $("#lbStatus").textContent = "Backend nicht erreichbar"; }
   $("#lbOwn").textContent = "Dein Gesamtwert: " + money(totalValue());
 }
+function drawLeaderboard(rows) {
+  $("#lbBody").innerHTML = rows.map((r,i) => `<tr class="${r.id === state.playerId ? "me" : ""}"><td>${i+1}.</td><td>${esc(r.name)}</td><td>${money(r.total)}</td></tr>`).join("") || "<tr><td colspan=\"3\">Noch keine Teilnehmer</td></tr>";
+}
+
 
 /* ==========================================================================
    Daten laden (echte Case-Inhalte aus der ByMykel/CSGO-API)
@@ -337,9 +388,10 @@ async function fetchJson(file) {
 const cacheSig = () => JSON.stringify([CONFIG.cases.map(c => c.name), CONFIG.freeCase.poolFrom]);
 
 async function loadData() {
-  // Cache, damit die großen JSON-Dateien nicht bei jedem Besuch geladen werden müssen
+  // Cache, damit die großen JSON-Dateien nicht bei jedem Besuch geladen werden müssen.
+  // (Preise stehen nicht im Cache, die kommen immer frisch aus CONFIG.)
   try {
-    const c = JSON.parse(localStorage.getItem("cs2sim_data_v1"));
+    const c = JSON.parse(localStorage.getItem("cs2sim_data_v2"));
     if (c && c.sig === cacheSig() && Date.now() - c.ts < CONFIG.api.cacheDays * 864e5) return c.data;
   } catch (e) {}
 
@@ -362,15 +414,26 @@ async function loadData() {
     return items;
   };
 
-  const out = { cases: [], freeItems: null };
+  const out = { cases: [], freeItems: null, missing: [], catalog: [] };
   for (const cc of CONFIG.cases) {
     const crate = findCase(cc.name);
-    if (!crate) { console.warn("Case nicht in der API gefunden:", cc.name); continue; }
-    out.cases.push({ name: crate.name, image: crate.image, price: cc.price, items: build(crate) });
+    if (!crate) { console.warn("Case nicht in der API gefunden:", cc.name); out.missing.push(cc.name); continue; }
+    out.cases.push({ key: cc.name, name: crate.name, image: crate.image, items: build(crate) });
   }
+  const allSkins = { milspec: [], restricted: [], classified: [], covert: [], gold: [] };
+  for (const crate of crates.filter(x => x.type === "Case" || !x.type)) {
+    for (const it of crate.contains || []) allSkins[tierOf(it.rarity)].push(compact(it));
+    for (const it of crate.contains_rare || []) allSkins.gold.push(compact(it));
+  }
+  const seen = new Set();
+  for (const tier of Object.keys(allSkins)) for (const skin of allSkins[tier]) if (!seen.has(skin.id)) { seen.add(skin.id); out.catalog.push({...skin,tier}); }
+  // Free Case: nur der Mil-Spec-Pool, alle anderen Seltenheiten bleiben leer
   const pool = findCase(CONFIG.freeCase.poolFrom);
-  if (pool) out.freeItems = build(pool);
-  try { localStorage.setItem("cs2sim_data_v1", JSON.stringify({ sig: cacheSig(), ts: Date.now(), data: out })); } catch (e) {}
+  if (pool) {
+    const all = build(pool);
+    if (all.milspec.length) out.freeItems = { milspec: all.milspec, restricted: [], classified: [], covert: [], gold: [] };
+  }
+  try { localStorage.setItem("cs2sim_data_v2", JSON.stringify({ sig: cacheSig(), ts: Date.now(), data: out })); } catch (e) {}
   return out;
 }
 
@@ -380,23 +443,73 @@ async function loadData() {
 const WEARS = [["Factory New", 0.07], ["Minimal Wear", 0.15], ["Field-Tested", 0.38], ["Well-Worn", 0.45], ["Battle-Scarred", 1.01]];
 const wearName = f => WEARS.find(w => f < w[1])[0];
 
-function rollTier(c) {
-  const avail = TIERS.filter(t => c.items[t.key].length);          // leere Seltenheiten fallen raus, Rest wird normiert
+// Tatsächliche Chancen eines Cases in %: leere Seltenheiten fallen weg, der Rest wird auf 100 % normiert.
+// Beim Free Case bleibt dadurch nur Mil-Spec mit 100 % übrig.
+function tierOdds(c) {
+  const avail = TIERS.filter(t => c.items[t.key].length);
   const sum = avail.reduce((s, t) => s + CONFIG.odds[t.key], 0);
-  let r = Math.random() * sum;
-  for (const t of avail) { r -= CONFIG.odds[t.key]; if (r < 0) return t.key; }
-  return avail[avail.length - 1].key;
+  const o = {};
+  for (const t of avail) o[t.key] = CONFIG.odds[t.key] / sum * 100;
+  return o;
+}
+function rollTier(c) {
+  const o = tierOdds(c);
+  let r = Math.random() * 100, last = null;
+  for (const t of TIERS) {
+    if (o[t.key] == null) continue;
+    last = t.key; r -= o[t.key];
+    if (r < 0) return t.key;
+  }
+  return last;
 }
 const pick = arr => arr[Math.floor(Math.random() * arr.length)];
 
-function itemPrice(base, tier, wear, stattrak) {
+function itemPrice(base, tier, wear, stattrak, mult) {
   const [lo, hi] = CONFIG.priceRanges[tier];
   const h = hash01(base.id);
   let p = lo + (hi - lo) * h * h;                                   // Skin-spezifisch, eher günstig verteilt
   if (wear) p *= CONFIG.wearMultiplier[wear];
   if (stattrak) p *= CONFIG.stattrakMultiplier;
-  return Math.max(0.03, round2(p));
+  p *= mult;                                                        // Wert-Multiplikator des Cases
+  return Math.max(0.01, round2(p));
 }
+
+// Erwartete Abnutzungs-Multiplikation über den Float-Bereich eines Skins
+function wearFactor(min, max) {
+  if (min == null) return 1;
+  if (max <= min) return CONFIG.wearMultiplier[wearName(min)];
+  let e = 0, lo = 0;
+  for (const [n, hi] of WEARS) {
+    const a = Math.max(lo, min), b = Math.min(hi, max);
+    if (b > a) e += (b - a) / (max - min) * CONFIG.wearMultiplier[n];
+    lo = hi;
+  }
+  return e;
+}
+// Erwarteter Wert eines Case-Öffnens bei Multiplikator 1 (aus den echten Item-Listen und Chancen)
+function expectedValue(items) {
+  const odds = tierOdds({ items });
+  const st = 1 + CONFIG.stattrakChance * (CONFIG.stattrakMultiplier - 1);
+  let ev = 0;
+  for (const t of TIERS) {
+    const list = items[t.key];
+    if (!list.length) continue;
+    const [lo, hi] = CONFIG.priceRanges[t.key];
+    let sum = 0;
+    for (const b of list) { const h = hash01(b.id); sum += (lo + (hi - lo) * h * h) * wearFactor(b.min, b.max) * st; }
+    ev += odds[t.key] / 100 * sum / list.length;
+  }
+  return ev;
+}
+// Cases aus Rohdaten + Preisen bauen, Multiplikator berechnen, nach Preis sortieren
+function buildCases(data) {
+  return data.cases.map(c => {
+    const cfg = CONFIG.cases.find(x => x.name === c.key);
+    const ev = expectedValue(c.items);
+    return { ...c, price: cfg.price, mult: cfg.mult ?? (ev > 0 ? cfg.price * CONFIG.targetReturn / ev : 1) };
+  }).sort((a, b) => a.price - b.price);
+}
+const groupOf = p => CONFIG.groups.find(g => p <= g.max) || CONFIG.groups[CONFIG.groups.length - 1];
 function fullName(d) {
   const st = d.stattrak ? "StatTrak™ " : "";
   const n = d.name.startsWith("★ ") ? "★ " + st + d.name.slice(2) : st + d.name;
@@ -413,7 +526,7 @@ function makeDrop(c) {
     uid: "d" + Date.now() + Math.random().toString(16).slice(2, 8),
     id: base.id, name: base.name, image: base.image, tier, wear,
     float: fl == null ? null : Number(fl.toFixed(6)), stattrak,
-    price: itemPrice(base, tier, wear, stattrak), ts: Date.now()
+    price: itemPrice(base, tier, wear, stattrak, c.mult || 1), ts: Date.now()
   };
 }
 
@@ -441,53 +554,65 @@ function winSound(tier) {
    ========================================================================== */
 let view = "cases", currentCase = null, busy = false;
 
-function freeRemaining() {
-  return Math.max(0, state.lastFree + CONFIG.freeCase.cooldownHours * 3600e3 - Date.now());
-}
-function fmtTime(ms) {
-  const s = Math.ceil(ms / 1000), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60;
-  return [h, m, x].map(v => String(v).padStart(2, "0")).join(":");
-}
 function freeCaseObj() {
-  return { name: CONFIG.freeCase.name, price: 0, free: true, image: null, items: DATA.freeItems };
+  return { name: CONFIG.freeCase.name, price: 0, free: true, mult: 1, image: null, items: DATA.freeItems };
 }
+const SHORT = { milspec: "Blau", restricted: "Lila", classified: "Pink", covert: "Rot", gold: "Gold" };
+const fmtPct = n => n.toFixed(2).replace(".", ",");
 
 function updateHeader() {
   $("#balance").textContent = money(state.balance);
   $("#nameChip").textContent = "👤 " + (state.name || "…");
   $("#muteBtn").textContent = state.muted ? "🔇" : "🔊";
-  $("#navCases").classList.toggle("active", view !== "inventory");
+  $("#navCases").classList.toggle("active", view === "cases" || view === "case");
   $("#navInv").classList.toggle("active", view === "inventory");
   $("#navInv").textContent = "Inventar (" + state.inventory.length + ")";
+  $("#navUpgrade").classList.toggle("active", view === "upgrader");
+  $("#navLeaderboard").classList.toggle("active", view === "leaderboard");
+  refreshBtn();
 }
 
 function render() {
   updateHeader();
   if (view === "inventory") renderInventory();
+  else if (view === "upgrader") renderUpgrader();
+  else if (view === "leaderboard") renderLeaderboard();
   else if (view === "case" && currentCase) renderCase(currentCase);
   else renderCases();
   window.scrollTo(0, 0);
 }
 
-function renderCases() {
-  view = "cases"; updateHeader();
-  const free = DATA.freeItems ? `
-    <div class="card click" data-action="opencase" data-case="__free">
-      <span class="free-badge">KOSTENLOS</span>
-      <div class="free-img">🎁</div>
-      <div class="name">${esc(CONFIG.freeCase.name)}</div>
-      <div class="price" data-free-label></div>
-    </div>` : "";
-  $("#view").innerHTML = `
-    <h2>Cases</h2>
-    <p class="sub">Echte CS2-Cases mit den echten Inhalten und Drop-Chancen. Alles mit Fake-Geld.</p>
-    <div class="grid">${free}${CASES.map((c, i) => `
+function caseCard(c, i) {
+  return `
       <div class="card click" data-action="opencase" data-case="${i}">
         ${imgTag(c.image)}
         <div class="name">${esc(c.name)}</div>
         <div class="price">${money(c.price)}</div>
-      </div>`).join("")}</div>`;
-  refreshFree();
+      </div>`;
+}
+function renderCases() {
+  view = "cases"; updateHeader();
+  const free = DATA.freeItems ? `
+    <div class="grid"><div class="card click" data-action="opencase" data-case="__free">
+      <span class="free-badge">KOSTENLOS</span>
+      <div class="free-img">🎁</div>
+      <div class="name">${esc(CONFIG.freeCase.name)}</div>
+      <div class="price">Unbegrenzt · nur blaue Skins</div>
+    </div></div>` : "";
+  const indexed = CASES.map((c, i) => ({ c, i }));
+  const groups = CONFIG.groups.map(g => {
+    const list = indexed.filter(x => groupOf(x.c.price) === g);
+    if (!list.length) return "";
+    return `<div class="group-head"><b>${esc(g.label)}</b><span>${money(list[0].c.price)} bis ${money(list[list.length - 1].c.price)}</span></div>
+      <div class="grid">${list.map(x => caseCard(x.c, x.i)).join("")}</div>`;
+  }).join("");
+  const missing = DATA.missing && DATA.missing.length
+    ? `<p class="sub" style="margin-top:26px">Nicht in der Datenquelle gefunden (übersprungen): ${DATA.missing.map(esc).join(", ")}</p>` : "";
+  $("#view").innerHTML = `
+    <h2>Cases</h2>
+    <p class="sub">Echte CS2-Cases mit den echten Inhalten und Drop-Chancen. Je weiter unten, desto teurer. Alles mit Fake-Geld.</p>
+    <div class="group-head first"><b>Gratis</b><span>unbegrenzt oft öffenbar</span></div>
+    ${free}${groups}${missing}`;
 }
 
 function cardHTML(d) {
@@ -500,27 +625,31 @@ function randomDisplay(c) {
 
 function renderCase(c) {
   view = "case"; currentCase = c; updateHeader();
+  const odds = tierOdds(c);
   const previews = Array.from({ length: 24 }, () => cardHTML(randomDisplay(c))).join("");
   const sections = TIERS.filter(t => c.items[t.key].length).map(t => {
-    const list = c.items[t.key], each = CONFIG.odds[t.key] / list.length;
+    const list = c.items[t.key], each = odds[t.key] / list.length;
     return `
       <div class="tier-head" style="--c:${t.color}"><b>${t.label}</b>
-        <span>${CONFIG.odds[t.key].toFixed(2).replace(".", ",")} % gesamt · ca. ${each.toFixed(3).replace(".", ",")} % pro Item</span></div>
+        <span>${fmtPct(odds[t.key])} % gesamt · ca. ${each.toFixed(3).replace(".", ",")} % pro Item</span></div>
       <div class="igrid">${list.map(it => `
         <div class="item" style="--c:${t.color}">${imgTag(it.image)}<div class="n">${esc(it.name)}</div></div>`).join("")}</div>`;
   }).join("");
+  const oddsLine = c.free ? "100 % Mil-Spec (blau)"
+    : TIERS.filter(t => odds[t.key]).map(t => `${SHORT[t.key]} ${fmtPct(odds[t.key])} %`).join(" · ");
   $("#view").innerHTML = `
     <button class="btn small" data-action="back">← Zurück</button>
     <h2 style="margin-top:14px">${esc(c.name)}</h2>
-    <p class="sub">${c.free ? "Kostenlos – einmal pro " + CONFIG.freeCase.cooldownHours + " Stunden" : "Preis: " + money(c.price)}
-       · Chancen: Blau 79,92 % · Lila 15,98 % · Pink 3,20 % · Rot 0,64 % · Gold 0,26 %</p>
+    <p class="sub">${c.free ? "Kostenlos · unbegrenzt oft öffenbar · nur blaue Skins" : "Preis: " + money(c.price)}
+       · Chancen: ${oddsLine}</p>
     <div class="roulette"><div class="pointer"></div><div class="track" id="track">${previews}</div></div>
     <div class="controls">
       <button class="btn primary" id="openBtn" data-action="open"></button>
-      <label><input type="checkbox" id="fast"> Schnell (ohne Animation)</label>
+      <label><input type="checkbox" id="fast" ${state.fast ? "checked" : ""}> Schnell (ohne Animation)</label>
+      <label><input type="checkbox" id="auto" ${state.autoSell ? "checked" : ""}> Blaue Skins automatisch verkaufen</label>
     </div>
     <h3>Mögliche Items</h3>${sections}`;
-  refreshFree();
+  refreshBtn();
 }
 
 function renderInventory() {
@@ -553,23 +682,85 @@ function renderInventory() {
         <div class="n">${esc(fullName(i))}</div>
         <div class="w">${i.float != null ? "Float " + i.float.toFixed(4) : "Vanilla"}</div>
         <div class="row"><span class="price">${money(i.price)}</span>
-          <button class="btn sell small" data-action="sell" data-uid="${esc(i.uid)}">Verkaufen</button></div>
+          <button class="btn small" data-action="inspect" data-uid="${esc(i.uid)}">Betrachten</button><button class="btn sell small" data-action="sell" data-uid="${esc(i.uid)}">Verkaufen</button></div>
       </div>`).join("")}</div>` : `<div class="center">Hier ist noch nichts. Öffne Cases und behalte die besten Items!</div>`}`;
   $("#invFilter").onchange = e => { window._invFilter = e.target.value; renderInventory(); };
   $("#invSort").onchange = e => { window._invSort = e.target.value; renderInventory(); };
 }
 
-/* Kostenlos-Case-Countdown */
-function refreshFree() {
-  const rem = freeRemaining();
-  document.querySelectorAll("[data-free-label]").forEach(el => el.textContent = rem ? "Bereit in " + fmtTime(rem) : "Jetzt öffnen!");
-  const b = $("#openBtn");
-  if (b && currentCase && view === "case" && !busy) {
-    if (currentCase.free) { b.disabled = rem > 0; b.textContent = rem ? "Bereit in " + fmtTime(rem) : "Kostenlos öffnen"; }
-    else { b.disabled = state.balance + 1e-9 < currentCase.price; b.textContent = "Öffnen – " + money(currentCase.price); }
-  }
+function rarityTier(t) { return TIER[t] || TIER.milspec; }
+function inspectItem(d) {
+  const tier = rarityTier(d.tier), rarity = d.tier === "gold" ? "Seltener Spezialgegenstand" : tier.label;
+  $("#inspectBox").innerHTML = `<button class="btn inspect-close" data-action="closeinspect" aria-label="Schließen">✕</button><div class="inspect-scene"><div class="inspect-title">${esc(fullName(d))}</div>${d.image ? imgTag(d.image).replace('<img','<img class="inspect-image"') : ""}<div class="inspect-details"><span>Seltenheit: ${esc(rarity)}</span><span>Float: ${d.float == null ? "Nicht verfügbar" : Number(d.float).toFixed(6)}</span><span>Zustand: ${esc(d.wear || "Ohne Abnutzung")}</span><span>${d.stattrak ? "StatTrak™" : "Kein StatTrak"}</span><b>Virtueller Wert: ${money(d.price)}</b><span>2D-Vorschau · kein 3D-Modell verfügbar</span></div></div>`;
+  $("#inspectModal").classList.add("show");
 }
-setInterval(refreshFree, 1000);
+function closeInspect(){ $("#inspectModal").classList.remove("show"); }
+let upFrom = null, upTo = null, upgradeBusy = false;
+function upgradeChanceFor(sourcePrice, targetPrice){
+  if(!(sourcePrice>0) || !(targetPrice>sourcePrice)) return 0;
+  const raw=100*Math.exp(-0.5*(targetPrice/sourcePrice-1));
+  return round2(Math.min(99.9,Math.max(0.01,raw)));
+}
+function upgradeCatalog(){
+  const arr = (DATA.catalog && DATA.catalog.length ? DATA.catalog : CASES.flatMap(c => Object.entries(c.items).flatMap(([tier,items]) => items.map(b=>({...b,tier})))));
+  const mult = CASES.reduce((m,c)=>Math.max(m,c.mult||1),1);
+  return arr.map(b=>{const fl=b.min==null?null:Number((b.min+(b.max-b.min)*.55).toFixed(6));const wear=fl==null?null:wearName(fl);return {...b,wear,float:fl,stattrak:false,price:itemPrice(b,b.tier,wear,false,mult),uid:"catalog:"+b.id};});
+}
+function renderUpgrader(){
+  view="upgrader"; updateHeader(); const from=state.inventory.find(x=>x.uid===upFrom); const catalog=upgradeCatalog();
+  const target=catalog.find(x=>x.uid===upTo);
+  const chance=from&&target?upgradeChanceFor(from.price,target.price):0;
+  const side=(d,label,empty)=>d?`<div class="upgrade-pick"><div class="sub">${label}</div>${imgTag(d.image)}<b>${esc(fullName(d))}</b><div class="price">${money(d.price)}</div></div>`:`<div class="upgrade-pick"><div class="sub">${label}</div><div class="center">${empty}</div></div>`;
+  $("#view").innerHTML=`<h2>Upgrader</h2><p class="sub">Wähle einen Skin aus deinem Inventar und ein wertvolleres Ziel. Spielgeld und virtuelle Items.</p><div class="upgrade-layout">${side(from,"Einsatz", "Wähle links einen Inventar-Skin")}
+  <div style="text-align:center"><div class="wheel" id="upgradeWheel" style="background:conic-gradient(#42d77d 0 ${chance*3.6}deg,#ed5a3d ${chance*3.6}deg 360deg)"><div class="wheel-pointer" id="upgradePointer"></div><div class="wheel-center"><strong id="upgradeChance">${fmtPct(chance)}%</strong><span>Gewinnchance</span></div></div><div style="margin-top:18px"><button class="btn primary" data-action="upgrade" ${!from||!target||upgradeBusy||chance<=0?"disabled":""}>${upgradeBusy?"Upgrade läuft …":"Go"}</button></div><p class="sub" id="upgradeMessage">Kleiner Wertunterschied: hohe Chance · großer Unterschied: niedrige Chance</p></div>
+  ${side(target,"Ziel", "Wähle rechts ein Ziel-Skin")}</div><div class="toolbar"><input id="upgradeSearch" placeholder="Skin suchen…"><select id="upgradePrice"><option value="all">Alle Preise</option><option value="10">Bis $10</option><option value="50">$10–$50</option><option value="200">$50–$200</option><option value="201">Ab $200</option></select><select id="upgradeTier"><option value="all">Alle Seltenheiten</option>${TIERS.map(t=>`<option value="${t.key}">${esc(t.label)}</option>`).join("")}</select></div><div class="upgrade-columns"><section><h3>Dein Inventar (${state.inventory.length})</h3><div class="upgrade-list" id="upgradeFromList">${state.inventory.map(d=>upgradeCard(d,upFrom===d.uid,"selectfrom")).join("")||"<p class=sub>Inventar leer</p>"}</div></section><section><h3>Ziel-Skins (${catalog.length})</h3><div class="upgrade-list" id="upgradeToList">${catalog.slice(0,250).map(d=>upgradeCard(d,upTo===d.uid,"selectto")).join("")}</div></section></div>`;
+  const filter=()=>{
+    const q=$("#upgradeSearch").value.toLowerCase(), p=$("#upgradePrice").value, t=$("#upgradeTier").value;
+    const list=catalog.filter(d=>{
+      const priceOk=p==="all"||(p==="10"&&d.price<=10)||(p==="50"&&d.price>10&&d.price<=50)||(p==="200"&&d.price>50&&d.price<=200)||(p==="201"&&d.price>200);
+      return d.name.toLowerCase().includes(q)&&(t==="all"||d.tier===t)&&priceOk&&(!from||d.price>from.price);
+    }).slice(0,250);
+    $("#upgradeToList").innerHTML=list.map(d=>upgradeCard(d,upTo===d.uid,"selectto")).join("")||"<p class=sub>Keine passenden wertvolleren Ziele</p>";
+  };
+  $("#upgradeSearch").oninput=filter;$("#upgradePrice").onchange=filter;$("#upgradeTier").onchange=filter;
+}
+function upgradeCard(d,sel,action){return `<div class="item pick-card ${sel?"selected":""}" style="--c:${rarityTier(d.tier).color}" data-action="${action}" data-uid="${esc(d.uid)}">${imgTag(d.image)}<div class=n>${esc(fullName(d))}</div><div class=w>${money(d.price)}</div></div>`;}
+async function runUpgrade(){
+  if(upgradeBusy||busy)return;
+  const source=state.inventory.find(x=>x.uid===upFrom),target=upgradeCatalog().find(x=>x.uid===upTo);
+  if(!source||!target||target.price<=source.price)return toast("Ziel muss wertvoller sein.");
+  upgradeBusy=true;
+  const chance=upgradeChanceFor(source.price,target.price);
+  const win=(crypto.getRandomValues(new Uint32Array(1))[0]/4294967296)*100<chance;
+  const idx=state.inventory.findIndex(x=>x.uid===source.uid);
+  if(idx<0){upgradeBusy=false;return renderUpgrader();}
+  // Commit genau einmal vor der Animation. Bei Neuladen bleibt der abgeschlossene Ausgang erhalten.
+  state.inventory.splice(idx,1);
+  if(win)state.inventory.push({...target,uid:"u"+crypto.randomUUID(),ts:Date.now()});
+  state.upgradePending={win,name:fullName(target),ts:Date.now()};
+  save();
+  const wheel=$("#upgradeWheel"),pointer=$("#upgradePointer"),msg=$("#upgradeMessage"),button=$("[data-action=upgrade]");
+  if(button)button.disabled=true;
+  const span=chance*3.6;
+  wheel.style.background=`conic-gradient(#42d77d 0 ${span}deg,#ed5a3d ${span}deg 360deg)`;
+  const landing=win?span*(0.12+Math.random()*0.76):span+(360-span)*(0.12+Math.random()*0.76);
+  // Mehrere volle Umdrehungen; der Zeiger endet innerhalb des passenden Farbbereichs.
+  pointer.style.transform=`rotate(${1440+landing}deg)`;
+  msg.textContent="Das Rad dreht sich …";
+  await new Promise(r=>setTimeout(r,4700));
+  state.upgradePending=null;save();upgradeBusy=false;upFrom=null;upTo=null;
+  toast(win?"Upgrade erfolgreich: "+fullName(target):"Upgrade fehlgeschlagen – Einsatz verloren");
+  renderUpgrader();
+}
+function renderLeaderboard(){view="leaderboard";updateHeader();refreshLeaderboard().then(()=>{const rows=window._leaderboardRows||[];$("#view").innerHTML=`<h2>Globale Rangliste</h2><p class=sub>Top 100 Spieler nach virtuellem Kontostand plus Inventarwert.</p>${!leaderboard?'<div class="center">Backend nicht verbunden. Es werden keine erfundenen Spieler angezeigt.</div>':`<div class=toolbar>Dein Platz: ${rows.findIndex(r=>r.id===state.playerId)+1||"—"}</div><div class=igrid>${rows.map((r,i)=>`<div class=item><b>#${i+1} ${esc(r.name)}</b><div class=w>${money(r.total)} ${r.id===state.playerId?"· Du":""}</div></div>`).join("")}</div>`}`;});}
+
+/* Zustand des Öffnen-Buttons (Guthaben reicht / Free Case) */
+function refreshBtn() {
+  const b = $("#openBtn");
+  if (!b || !currentCase || view !== "case" || busy) return;
+  if (currentCase.free) { b.disabled = false; b.textContent = "Kostenlos öffnen"; }
+  else { b.disabled = state.balance + 1e-9 < currentCase.price; b.textContent = "Öffnen – " + money(currentCase.price); }
+}
 
 /* ==========================================================================
    Case öffnen
@@ -599,16 +790,18 @@ function spin(c, drop, fast) {
 async function doOpen() {
   if (busy || !currentCase) return;
   const c = currentCase;
-  if (c.free) { if (freeRemaining() > 0) return toast("Der kostenlose Case ist noch im Cooldown."); }
-  else if (state.balance + 1e-9 < c.price) return toast("Nicht genug Guthaben.");
+  if (!c.free && state.balance + 1e-9 < c.price) return toast("Nicht genug Guthaben.");
   busy = true; $("#openBtn").disabled = true;
-  if (c.free) state.lastFree = Date.now(); else state.balance = round2(state.balance - c.price);
+  if (!c.free) state.balance = round2(state.balance - c.price);
   const drop = makeDrop(c);
   state.pending = drop;           // falls die Seite während der Animation neu geladen wird, geht nichts verloren
   save();
   await spin(c, drop, $("#fast").checked);
-  showResult(drop);
-  busy = false;
+  if ($("#auto").checked && drop.tier === "milspec") {       // Auto-Verkauf nur für blaue Skins
+    state.balance = round2(state.balance + drop.price); state.pending = null; save();
+    toast("Verkauft: " + fullName(drop) + " (+" + money(drop.price) + ")");
+  } else showResult(drop);
+  busy = false; refreshBtn();
 }
 
 function showResult(d) {
@@ -634,7 +827,7 @@ function closeResult(sell) {
   else { state.inventory.push(d); toast("Ins Inventar gelegt"); }
   state.pending = null; save();
   $("#resultModal").classList.remove("show");
-  if (view === "case") refreshFree();
+  refreshBtn();
   if (view === "inventory") renderInventory();
 }
 
@@ -644,9 +837,16 @@ function closeResult(sell) {
 document.addEventListener("click", e => {
   const el = e.target.closest("[data-action]"); if (!el) return;
   const a = el.dataset.action;
-  if (busy && ["nav", "back", "opencase"].includes(a)) return;
+  if (upgradeBusy && a !== "panic") return;
+  if ((busy||upgradeBusy) && ["nav", "back", "opencase","selectfrom","selectto"].includes(a)) return;
   switch (a) {
     case "nav": view = el.dataset.view; render(); break;
+    case "selectfrom": upFrom=el.dataset.uid; renderUpgrader(); break;
+    case "selectto": upTo=el.dataset.uid; renderUpgrader(); break;
+    case "upgrade": runUpgrade(); break;
+    case "inspect": { const d=state.inventory.find(x=>x.uid===el.dataset.uid); if(d) inspectItem(d); break; }
+    case "closeinspect": closeInspect(); break;
+    case "panic": setPanic(true); break;
     case "back": view = "cases"; render(); break;
     case "opencase": renderCase(el.dataset.case === "__free" ? freeCaseObj() : CASES[+el.dataset.case]); window.scrollTo(0, 0); break;
     case "open": doOpen(); break;
@@ -675,6 +875,14 @@ document.addEventListener("click", e => {
     case "retry": init(); break;
   }
 });
+function setPanic(on){state.panic=on;try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}document.body.classList.toggle("panic",on);document.title=on?"Freischaltcode":"CS2 Case Simulator";if(on)setTimeout(()=>$("#panicCode").focus(),0);}
+$("#panicForm").addEventListener("submit",e=>{e.preventDefault();if($("#panicCode").value==="1234"){setPanic(false);$("#panicCode").value="";$("#panicError").textContent="";}else{$("#panicError").textContent="Code nicht korrekt.";$("#panicCode").select();}});
+$("#inspectModal").addEventListener("click",e=>{if(e.target.id==="inspectModal")closeInspect();});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeInspect();});
+
+document.addEventListener("change", e => {
+  if (e.target.id === "fast") { state.fast = e.target.checked; save(); }
+  if (e.target.id === "auto") { state.autoSell = e.target.checked; save(); }
+});
 $("#nameInput").addEventListener("keydown", e => { if (e.key === "Enter") document.querySelector('[data-action="savename"]').click(); });
 
 /* ==========================================================================
@@ -685,7 +893,7 @@ async function init() {
   $("#view").innerHTML = `<div class="center">Lade Case-Daten …</div>`;
   try {
     DATA = await loadData();
-    CASES = DATA.cases;
+    CASES = buildCases(DATA);
     if (!CASES.length) throw new Error("Keine Cases gefunden");
   } catch (err) {
     console.error(err);
@@ -697,8 +905,14 @@ async function init() {
   if (!state.name) $("#nameModal").classList.add("show");
   else refreshLeaderboard();
   if (state.pending) showResult(state.pending);   // unterbrochene Öffnung wiederherstellen
+  if (state.upgradePending) {
+    const result=state.upgradePending;
+    state.upgradePending=null; save();
+    toast(result.win?"Upgrade abgeschlossen: "+result.name:"Upgrade verloren – Einsatz wurde entfernt");
+  }
 }
 updateHeader();
+if(state.panic)setPanic(true);
 init();
 </script>
 </body>
